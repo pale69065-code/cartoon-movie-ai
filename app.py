@@ -1,0 +1,55 @@
+import streamlit as st
+from gtts import gTTS
+import replicate
+import os
+
+# Page Setup
+st.set_page_config(page_title="AI Animation Movie Maker Studio", layout="wide")
+st.title("🎬 AI Animation Movie Maker Studio")
+
+# Sidebar for API Key Setup
+st.sidebar.header("🔑 API Settings")
+api_key = st.sidebar.text_input("Enter Replicate API Key", type="password")
+if api_key:
+    os.environ["REPLICATE_API_TOKEN"] = api_key
+
+# STEP 1: Language & Voice Selection
+st.header("१. भाषा र आवाज छनोट (Language & Voice Setup)")
+c1, c2 = st.columns(2)
+
+with c1:
+    lang = st.selectbox("भाषा छान्नुहोस्", ["Nepali", "Magar (Record/Upload Audio)", "English"])
+
+with c2:
+    voice_type = st.selectbox(
+        "आवाजको प्रकार",
+        ["Kid Male", "Kid Female", "Young Male", "Young Female", "Adult Male", "Adult Female", "Old Man", "Old Woman"]
+    )
+
+# STEP 2: Character Customization
+st.header("२. पात्र छनोट र डिजाइन (Character Setup)")
+col1, col2 = st.columns(2)
+
+with col1:
+    category = st.radio("पात्रको वर्ग", ["Human", "Animal"])
+    if category == "Human":
+        sub_category = st.selectbox("मानव पात्र", ["Boy", "Girl", "Man", "Woman", "Old Man", "Old Woman"])
+    else:
+        sub_category = st.selectbox("जनावर पात्र", ["Dog", "Cat", "Lion", "Tiger", "Monkey", "Elephant"])
+
+with col2:
+    hair_style = st.selectbox("कपालको स्टाइल", ["Short", "Long", "Curly", "Bald"])
+    beard_style = st.selectbox("दाह्री/मुछ", ["None", "Short Beard", "Long Beard", "Mustache"])
+    cloth_color = st.color_picker("कपडाको रङ", "#00f0ff")
+
+if st.button("✨ १. Generate Character Image"):
+    st.success(f"{sub_category} को पात्र चित्र जेनेरेट भयो!")
+
+# STEP 3: Script & Audio Setup
+st.header("३. कथा र आवाज (Story & Voice Setup)")
+audio_path = "generated_voice.mp3"
+
+if lang == "Magar (Record/Upload Audio)":
+    uploaded_file = st.file_uploader("मगर भाषाको अडियो फाइल अपलोड गर्नुहोस् (MP3/WAV)", type=["mp3", "wav"])
+    if uploaded_file:
+        with open(audio_path,
